@@ -1,0 +1,1 @@
+C:\Users\AyamKiwi\Google\ Drive\vscode\Notes\ANUM\pertemuan-1\Praktikum\(UPDATED)-bisect\target\debug\bisect.exe: C:\Users\AyamKiwi\Google\ Drive\vscode\Notes\ANUM\pertemuan-1\Praktikum\(UPDATED)-bisect\src\main.rs

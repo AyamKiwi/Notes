@@ -1,0 +1,504 @@
+% !TEX program = xelatex
+\documentclass[12pt]{article}
+\usepackage[a4paper, margin=2.45cm]{geometry}
+\usepackage[fleqn]{amsmath}
+\usepackage{amssymb}
+\usepackage{amsfonts}
+\usepackage[dvipsnames]{xcolor}
+\usepackage{setspace}
+\usepackage{graphicx}
+\usepackage{cancel}
+\usepackage{xfrac}
+\usepackage{fontenc}
+\usepackage{fontspec}
+\usepackage[none]{hyphenat}
+\usepackage{etoolbox}
+\usepackage{longtable}
+\usepackage{listings}
+\usepackage{hyperref}
+
+\hypersetup{
+    colorlinks=true,
+    linkcolor=blue,
+    filecolor=magenta,      
+    urlcolor=cyan,
+}
+
+\setlength{\LTleft}{0pt}
+\lstset{basicstyle = \footnotesize\color{white}\ttfamily, backgroundcolor = \color{bg}}%, moredelim=**[is][\color{green}]{@}{@}, moredelim=**[is][\color{gray}]{*}{*}, moredelim=**[is][\color{black}]{/*}{/*}}
+\AtBeginEnvironment{align}{\setcounter{equation}{0}}
+\setmonofont{Consolas}
+\everymath{\displaystyle}
+\begin{document}
+% \onehalfspacing
+\definecolor{bg}{gray}{0.1}
+% \pagecolor{bg}
+% \color{white}
+\newcommand{\unt}{\int\displaylimits}
+\newcommand{\jadi}{$\therefore\;$}
+\newcommand{\rut}[1]{\sqrt{#1}}
+\newcommand{\jgj}{\Leftrightarrow}
+\newcommand{\tebal}[1]{\underline{\textbf{#1}}\bigskip}
+\newcommand{\infak}{\int\displaylimits^{\infty}_{\infty}}
+\newcommand{\lqm}{\lim\displaylimits}
+
+\sloppy
+
+\noindent
+2102800 - Muhammad Rahman Wicaksono - Pertemuan 1 Analisis Numerik\\
+\noindent\rule{\textwidth}{0.2pt}\\\\
+
+Diberikan persamaan berikut:
+\begin{align*}
+        x^2 = 3 + \ln(x) 
+\end{align*}
+
+\bigskip
+
+\begin{enumerate}
+    \item {
+        Bagaimana metode bagi-dua mencari hampiran akar-akar persamaan tak linier tersebut?\bigskip
+
+        Sebelum menggunakan metode bagi-dua, persamaan akan diubah menjadi bentuk $ f(x) = 0 $ 
+        \begin{align*}
+            f(x) = 3 + ln(x) - x^2 = 0
+        \end{align*}
+        Kemudian metode bagi-dua memiliki langkah-langkah sebagai berikut:
+        \begin{enumerate}
+            \item {
+                Cari selang $ (a,b) $ sehingga $ f(a) \cdot f(b) < 0 $ \bigskip
+
+                Langkah ini dilakukan untuk mencari selang $ (a,b) \subset D_f $ sedemikian sehingga $ f(x) $ pada selang tersebut melewati titik 0. Terdapat 2 kasus dimana hal ini terjadi
+                \begin{enumerate}
+                    \item {
+                        $ f(a) $ negatif dan $ f(b) $ positif
+                        \begin{align*}
+                            \left.
+                            \begin{matrix}
+                                f(a) < 0 \\
+                                f(b) > 0
+                            \end{matrix} 
+                            \right\} \Rightarrow f(a) \cdot f(b) < 0
+                        \end{align*}
+                    }
+                    \item {
+                        $ f(a) $ positif dan $ f(b) $ negatif
+                        \begin{align*}
+                            \left.
+                            \begin{matrix}
+                                f(a) > 0 \\
+                                f(b) < 0
+                            \end{matrix} 
+                            \right\} \Rightarrow f(a) \cdot f(b) < 0
+                        \end{align*}
+                    }
+                \end{enumerate}
+                Dari kedua kasus, diperoleh $ f(a) \cdot f(b) < 0 $
+            }\bigskip
+            \item {
+                Pilih titik tengah $ t \in (a,b) $ \bigskip
+
+                Setelah memiliki selang $ (a,b) $, pilih salah satu titik $ t \in (a,b) $. Untuk menyederhanakan algoritma, pilih 
+                \begin{align*}
+                    t = \frac{1}{2}(a + b) 
+                \end{align*}
+                Kemudian jika
+                \begin{enumerate}
+                    \item {
+                        $ f(t) = 0 $
+                        \begin{align*}
+                            \Rightarrow \text{Solusinya $ x = t $}
+                        \end{align*}
+                    }
+                    \item {
+                        $ f(t) \cdot f(a) < 0 $
+                        \begin{align*}
+                            \Rightarrow \text{Ubah selang $ (a,b) $ menjadi $ (a,t) $ dan ulangi dari langkah (a)}
+                        \end{align*}
+                    }
+                    \item {
+                        $ f(t) \cdot f(b) < 0 $
+                        \begin{align*}
+                            \Rightarrow \text{Ubah selang $ (a,b) $ menjadi $ (t,b) $ dan ulangi dari langkah (a)}
+                        \end{align*}
+                    }
+                \end{enumerate}
+            }
+        \end{enumerate}
+        Lakukan kedua langkah ini sampai ditemukan solusinya atau sampai tingkat galat yang diinginkan \bigskip
+
+        Perhitungan akar dengan metode ini dilakukan menggunakan bahasa pemograman "Rust" yaitu sebagai berikut:
+        \begin{lstlisting}
+    use std::io;
+
+    // INPUT KE VARIABEL FLOATING POINT F64
+    fn read() -> f64 {
+        let mut buffer = String::new();
+        io::stdin().read_line(&mut buffer).expect("Failed");
+        return buffer.trim().parse().expect("Failed");
+    }
+
+    // FUNGSI F(X)
+    fn f(x : f64) -> f64 {
+        return 3.0 + x.ln() - (x * x);
+    }
+
+    fn main() {
+
+        // INPUT BATAS BAWAH 
+        println!();
+        println!("Batas bawah =");
+        let mut a = read();
+
+        // INPUT BATAS ATAS
+        println!();
+        println!("Batas atas =");
+        let mut b = read();
+
+        // VALIDASI INTERVAL
+        while f(a) * f(b) >= 0.0{
+            println!();
+            println!("Batas bawah =");
+            a = read();
+
+            println!();
+            println!("Batas atas =");
+            b = read();
+        }
+
+        // INPUT GALAT
+        println!();
+        println!("Galat =");
+        let galat = read();
+        
+        // LOOPING ALGORITMA
+        let mut c = (a + b) / 2.0;
+        while (f(c) != 0.0) & ((a - b).abs() > galat){
+
+            // OUTPUT SEMENTARA
+            println!();
+            println!();
+            println!("a = {a}");
+            println!("b = {b}");
+            println!("c = {c}");
+            println!();
+            println!("f(c) = {}",f(c));
+            println!("|a - b| = {}",(a - b).abs());
+            println!();
+            println!("f(a) * f(c) = {}",f(a)*f(c));
+            println!("f(b) * f(c) = {}",f(b)*f(c));
+            
+            // PERBARUAN INTERVAL
+            if f(a) * f(c) < 0.0 {
+                b = c;
+            }
+            if f(b) * f(c) < 0.0 {
+                a = c;
+            }
+            
+            // PERBARUAN NILAI C
+            c = (a + b) / 2.0;
+        }
+
+        // OUTPUT AKHIR
+        println!();
+        println!();
+        println!("a = {a}");
+        println!("b = {b}");
+        println!("c = {c}");
+        println!();
+        println!("f(c) = {}",f(c));
+        println!("|a - b| = {}",(a - b).abs());
+        println!();
+        println!("f(a) * f(c) = {}",f(a)*f(c));
+        println!("f(b) * f(c) = {}",f(b)*f(c));
+        println!();
+        println!("x = {c}");
+    }            
+        \end{lstlisting}
+
+        Untuk $ f(x) = 3 + \ln(x) - x^2 $, dipilih selang $ (0.01,1) $ sebagai interval awal dengan tingkat galat sebesar 0.00001. Hasil yang didapatkan adalah sebagai berikut:
+        \begin{lstlisting}
+    Batas bawah =
+    0.01
+
+    Batas atas =
+    1
+
+    Galat =
+    0.00001
+
+
+    a = 0.01
+    b = 1
+    c = 0.505
+
+    f(c) = 2.061778150293223
+    |a - b| = 0.99
+
+    f(a) * f(c) = -3.3097109947873844
+    f(b) * f(c) = 4.123556300586446
+
+
+    a = 0.01
+    b = 0.505
+    c = 0.2575
+
+    f(c) = 1.5769581911216537
+    |a - b| = 0.495
+
+    f(a) * f(c) = -2.5314439687573005
+    f(b) * f(c) = 3.25133794238055
+
+
+    .
+
+    .
+
+    .
+
+
+    a = 0.04991058349609375
+    b = 0.04992568969726563
+    c = 0.049918136596679694
+
+    f(c) = 0.0001372962301794808
+    |a - b| = 0.000015106201171878608
+
+    f(a) * f(c) = -0.0000000018220511677599045
+    f(b) * f(c) = 0.0000000395194017977414
+
+
+    a = 0.04991058349609375
+    b = 0.049918136596679694
+    c = 0.04991436004638672
+
+    f(c) = 0.00006201551748219458
+    |a - b| = 0.0000075531005859427736
+
+    f(a) * f(c) = -0.0000000008230047241643406
+    f(b) * f(c) = 0.000000008514496762935003
+
+    x = 0.04991436004638672
+        \end{lstlisting}
+        Diperoleh akar dari $ f(x) = 3 + \ln(x) - x^2 $ dengan galat sebesar 0.00001 adalah 0.04991153 sehingga dapat disimpulkan solusi dari $ x^2 = 3 + \ln(x) $ dengan galat sebesar 0.00001 adalah $ x = 0.04991436004638672 $
+    } \bigskip
+    \item {
+        Bagaimana metode posisi palsu mencari hampiran akar-akar persamaan tak linier tersebut?\bigskip
+
+        Sebelum melakukan metode posisi palsu, ubah persamaan menjadi bentuk $ f(x) = 0 $
+        \begin{align*}
+            f(x) = 3 + \ln(x) -x^2 
+        \end{align*}
+        Kemudian, lakukan langkah-langkah sebagai berikut:
+        \begin{enumerate}
+            \item {
+                Tentukan interval $ (a,b) $ sehingga $ f(a) \cdot f(b) < 0 $ \bigskip
+
+                Setelah dijelaskan sebelumnya, syarat $ f(a) \cdot f(b) < 0 $ menjamin bahwa akar dari $ f(x) $ berada di dalam interval $ (a,b) $ 
+            }
+            \item {
+                Pilih titik $ c \in (a,b) $\bigskip
+
+                Pilih salah satu titik $ c $ di interval $ (a,b) $. Dalam metode ini, nilai c ditentukan sebagai berikut:
+                \begin{align*}
+                    c = \frac{a \cdot f(b) - b \cdot f(a)}{f(b) - f(a)} 
+                \end{align*}
+                Kemudian periksa apabila
+                \begin{enumerate}
+                    \item {
+                        $ f(c) = 0 $
+                        \begin{align*}
+                            \Rightarrow\text{Solusinya } x = c
+                        \end{align*}
+                    }
+                    \item {
+                        $ f(a) \cdot f(c) < 0 $
+                        \begin{align*}
+                            \Rightarrow\text{Ubah interval $ (a,b) $ menjadi $ (a,c) $ dan ulangi langkah}
+                        \end{align*}
+                    }
+                    \item {
+                        $ f(b) \cdot f(c) < 0 $
+                        \begin{align*}
+                            \Rightarrow\text{Ubah interval $ (a,b) $ menjadi $ (c,b) $ dan ulangi langkah}
+                        \end{align*}
+                    }
+                \end{enumerate}
+            }
+        \end{enumerate}
+        Ulangi langkah-lakukan tersebut sampai solusinya ditemukan atau sampai nilai galat dicapai.
+
+        Perhitungan akar dengan metode ini dilakukan menggunakan bahasa pemograman "Rust" yaitu sebagai berikut:
+        \begin{lstlisting}
+    use std::io;
+
+    // INPUT KE VARIABEL F64
+    fn read() -> f64 {
+        let mut buffer = String::new();
+        io::stdin().read_line(&mut buffer).expect("Failed");
+        return buffer.trim().parse().expect("Failed");
+    }
+
+    // FUNGSI F(X)
+    fn f(x : f64) -> f64 {
+        return 3.0 + x.ln() - (x * x);
+    }
+
+    fn main() {
+
+        // INPUT BATAS BAWAH 
+        println!();
+        println!("Batas bawah =");
+        let mut a = read();
+
+        // INPUT BATAS ATAS
+        println!();
+        println!("Batas atas =");
+        let mut b = read();
+
+        // VALIDASI INTERVAL
+        while f(a) * f(b) >= 0.0{
+            println!();
+            println!("Batas bawah =");
+            a = read();
+
+            println!();
+            println!("Batas atas =");
+            b = read();
+        }
+
+        // INPUT GALAT
+        println!();
+        println!("Galat =");
+        let galat = read();
+        
+        // LOOPING ALGORITMA
+        let mut c = (a * f(b) - b * f(a))/(f(b) - f(a));
+        while (f(c) != 0.0) & ((a - b).abs() > galat){
+
+            // OUTPUT SEMENTARA
+            println!();
+            println!();
+            println!("a = {a}");
+            println!("b = {b}");
+            println!("c = {c}");
+            println!();
+            println!("f(c) = {}",f(c));
+            println!("|a - b| = {}",(a - b).abs());
+            println!();
+            println!("f(a) * f(c) = {}",f(a)*f(c));
+            println!("f(b) * f(c) = {}",f(b)*f(c));
+            
+            // PERBARUAN INTERVAL
+            if f(a) * f(c) < 0.0 {
+                b = c;
+            }
+            if f(b) * f(c) < 0.0 {
+                a = c;
+            }
+            
+            // PERBARUAN NILAI C
+            c = (a * f(b) - b * f(a))/(f(b) - f(a));
+        }
+
+        // OUTPUT AKHIR
+        println!();
+        println!();
+        println!("a = {a}");
+        println!("b = {b}");
+        println!("c = {c}");
+        println!();
+        println!("f(c) = {}",f(c));
+        println!("|a - b| = {}",(a - b).abs());
+        println!();
+        println!("f(a) * f(c) = {}",f(a)*f(c));
+        println!("f(b) * f(c) = {}",f(b)*f(c));
+        println!();
+        println!("x = {c}");
+    }            
+        \end{lstlisting}
+
+        Untuk $ f(x) = 3 + \ln(x) - x^2 $, dipilih selang $ (0.01,1) $ sebagai interval awal dengan tingkat galat sebesar 0.00001. Hasil yang didapatkan adalah sebagai berikut:
+        \begin{lstlisting}
+    Batas bawah =
+    0.01
+
+    Batas atas =
+    1
+
+    Galat =
+    0.00001
+
+
+    a = 0.01
+    b = 1
+    c = 0.45080399030971813
+
+    f(c) = 2.0000531170838625
+    |a - b| = 0.99
+
+    f(a) * f(c) = -3.2106256392472727
+    f(b) * f(c) = 4.000106234167725
+
+
+    a = 0.01
+    b = 0.45080399030971813
+    c = 0.20626797488753582
+
+    f(c) = 1.3788744159408937
+    |a - b| = 0.4408039903097181
+
+    f(a) * f(c) = -2.2134659901316587
+    f(b) * f(c) = 2.7578220736697747
+
+
+    .
+
+    .
+
+    .
+
+
+    a = 0.01
+    b = 0.04991124917784136
+    c = 0.04991124917784135
+
+    f(c) = -0.00000000000000025673907444456745
+    |a - b| = 0.039911249177841356
+
+    f(a) * f(c) = 0.0000000000000004121355817840411
+    f(b) * f(c) = -0.00000000000000000000000000000004798875753616133
+
+
+    a = 0.04991124917784135
+    b = 0.04991124917784136
+    c = 0.04991124917784136
+
+    f(c) = 0.00000000000000018691645453650096
+    |a - b| = 0.000000000000000006938893903907228
+
+    f(a) * f(c) = -0.00000000000000000000000000000004798875753616133
+    f(b) * f(c) = 0.00000000000000000000000000000003493776097649583
+
+    x = 0.04991124917784136
+        \end{lstlisting}
+        Diperoleh akar dari $ f(x) = 3 + \ln(x) - x^2 $ dengan galat sebesar 0.00001 adalah 0.04991153 sehingga dapat disimpulkan solusi dari $ x^2 = 3 + \ln(x) $ dengan galat sebesar 0.00001 adalah $ x = 0.04991124917784136 $
+    }\bigskip
+    \item {
+        Dapatkah kalian memperoleh nilai eksak untuk akar-akar riil dari masalah tersebut?\bigskip
+
+        Pada nomor sebelumnya, digunakan galat sebesar 0.00001. Untuk memperoleh nilai eksaknya, nilai galat harus 0. Namun ketika algoritma dijalankan dengan galat sebesar 0, program tidak berhenti untuk waktu yang lama. Apabila program berhenti dan menghasilkan solusi pun tidak menjamin bahwa hasil tersebut adalah nilai eksak karena algoritma diatas menggunakan \emph{floating point f32} yaitu representasi bilangan riil dengan bilangan bulat biner 32 bit yang tidak akurat sepenuhnya.
+    }\bigskip
+    \item {
+        Apa yang dapat kalian simpulkan mengenai kedua metode yang digunakan (metode bagi-dua dan metode posisi palsu)?\bigskip
+
+        Dari kedua metode tersebut, akar persamaan non-linier dapat ditentukan dengan menentukan suatu interval dimana akar persamaan tersebut termuat kemudian memperkecil interval tersebut sampai interval berukuran cukup kecil atau sampai nilai eksaknya ditemukan. Kedua metode ini memiliki perbedaan dari cara interval diperkecil dengan metode bagi-dua membagi interval menjadi 2 interval sama besar yang kemudian ditentukan interval mana yang masih memuat akarnya, dan metode posisi palsu yang membagi interval menjadi 2 sesuai nilai fungsi pada batas interval yang kemudian ditentukan interval mana yang masih memuat akarnya.
+    }\bigskip
+\end{enumerate}
+Sumber:
+\begin{enumerate}
+    \item \href{https://en.wikipedia.org/wiki/Bisection_method}{Bisection method - Wikipedia}
+    \item \href{https://en.wikipedia.org/wiki/Regula_falsi}{Regula falsi - Wikipedia}
+\end{enumerate}
+\end{document}

@@ -1,0 +1,167 @@
+% !TEX program = xelatex
+\documentclass[12pt]{article}
+\usepackage[a4paper, margin=2.45cm]{geometry}
+\usepackage[fleqn]{amsmath}
+\usepackage{amssymb}
+\usepackage{amsfonts}
+\usepackage[dvipsnames]{xcolor}
+\usepackage{setspace}
+\usepackage{graphicx}
+\usepackage{cancel}
+\usepackage{xfrac}
+\usepackage{fontenc}
+\usepackage{fontspec}
+\usepackage[none]{hyphenat}
+\usepackage{etoolbox}
+\usepackage{longtable}
+\usepackage{listings}
+
+\setlength{\LTleft}{0pt}
+\lstset{basicstyle = \footnotesize\color{white}\ttfamily, backgroundcolor = \color{bg}}
+\AtBeginEnvironment{align}{\setcounter{equation}{0}}
+\setmonofont{Consolas}
+\everymath{\displaystyle}
+\begin{document}
+% \onehalfspacing
+\definecolor{bg}{gray}{0.1}
+% \pagecolor{bg}
+% \color{white}
+\sloppy
+\newcommand{\unt}{\int\displaylimits}
+\newcommand{\jadi}{$\therefore\;$}
+\newcommand{\rut}[1]{\sqrt{#1}}
+\newcommand{\jgj}{\Leftrightarrow}
+\newcommand{\tebal}[1]{\underline{\textbf{#1}}\bigskip}
+\newcommand{\infak}{\int\displaylimits^{\infty}_{\infty}}
+\newcommand{\lqm}{\lim\displaylimits}
+
+\noindent Kelompok 5
+\begin{enumerate}
+    \item Rafif Rabbani (2102286)
+    \item Bagas Ghulam Maulana (2102476)
+    \item Muhammad Rahman Wicaksono (2102800)
+\end{enumerate}
+Pertemuan 5 Analisis Numerik\\
+\noindent\rule{\textwidth}{0.2pt}\bigbreak
+
+Diberikan data berikut:
+\begin{longtable}[c]{|c|c|c|c|c|c|}
+    \hline
+    $t$        & 1       & 1.2      & 1.4      & 1.6      & 1.8      \\ \hline
+    $y = f(t)$ & 7.38906 & 11.02318 & 16.44465 & 24.53253 & 44.70118 \\ \hline
+\end{longtable}
+Hampiri nilai fungsi $ y $ pada $ t = 1.1 $ dengan metode berikut:
+\begin{enumerate}
+    \item {
+        Interpolasi Linier
+
+        Nilai fungsi $ y = f(t) $ pada $ t = 1.1 $ dihampiri dengan
+        \begin{align*}
+            f(t)    & = f(t_0) + \frac{f(t_1) - f(t_0)}{t_1 - t_0}(t - t_0) \\
+            f(1.1)  & = 7.38906 + \frac{11.02318 - 7.38906}{1.2 - 1}(1.1 - 1) \\
+                    & = 9.20612
+        \end{align*}
+        Perhitungan dengan "Microsoft Excel"
+        \begin{longtable}[c]{|l|c|c|c|c|c|}
+            \hline
+            $t$        & 1       & 1.2      & 1.4      & 1.6      & 1.8      \\ \hline
+            $y = f(t)$ & 7.38906 & 11.02318 & 16.44465 & 24.53253 & 44.70118 \\ \hline
+            $ t= $     & \multicolumn{5}{|r|}{1.1} \\ \hline
+            $ y $      & \multicolumn{5}{|r|}{9.20612} \\ \hline
+        \end{longtable}
+    }
+    \item {
+        Interpolasi Kuadrat
+
+        Misalkan
+        \begin{align*}
+            L_0     & = \frac{(t - t_1)(t - t_2)}{(t_0 - t_1)(t_0 - t_2)} \\
+                    & = \frac{(1.1 - 1.2)(1.1 - 1.4)}{(1 - 1.2)(1 - 1.4)} \\
+                    & = 0.375 \\
+            L_1     & = \frac{(t - t_0)(t - t_2)}{(t_1 - t_0)(t_1 - t_2)} \\
+                    & = \frac{(1.1 - 1)(1.1 - 1.2)}{(1.2 - 1)(1.2 - 1.4)} \\
+                    & = 0.75 \\
+            L_2     & = \frac{(t - t_0)(t - t_1)}{(t_2 - t_0)(t_2 - t_1)} \\
+                    & = \frac{(1.1 - 1)(1.1 - 1.2)}{(1.4 - 1.1)(1.4 - 1.2)} \\
+                    & = -0.125 
+        \end{align*}
+        Maka
+        \begin{align*}
+            f(t)    & = t_0L_0 + t_1L_1 t_2L_2 \\
+                    & = 1(0.375) + 1.2(0.75) + 1.4(-0.125) \\
+                    & = 8.982701
+        \end{align*}
+        Perhitungan dengan "Microsoft Excel"
+        \begin{longtable}[c]{|l|lllll|}
+            \hline
+            t        & \multicolumn{1}{l|}{1}       & \multicolumn{1}{l|}{1.2}      & \multicolumn{1}{l|}{1.4}      & \multicolumn{1}{l|}{1.6}      & 1.8      \\ \hline
+            \endfirsthead
+            %
+            \endhead
+            %
+            y = f(t) & \multicolumn{1}{l|}{7.38906} & \multicolumn{1}{l|}{11.02318} & \multicolumn{1}{l|}{16.44465} & \multicolumn{1}{l|}{24.53253} & 44.70118 \\ \hline
+            t = & \multicolumn{5}{l|}{1.1}        \\ \hline
+            y=  & \multicolumn{5}{l|}{8.98270125} \\ \hline
+        \end{longtable}
+    }
+    \item {
+        Interpolasi Beda Maju Newton-Gregory
+
+        Tabel beda:
+        \begin{longtable}[c]{|l|l|l|l|l|l|}
+            \hline
+            $x$ & $f(x)$ & {$\Delta f$} & {$\Delta f^2$} & {$\Delta f^3$} & {$\Delta f^4$} \\ \hline
+            1   & 7.38906  & 3.63412  & 1.78735  & 0.87906 & 8.53529 \\ \hline
+            1.2 & 11.02318 & 5.42147  & 2.66641  & 9.41436 &         \\ \hline
+            1.4 & 16.44465 & 8.08788  & 12.08077 &         &         \\ \hline
+            1.6 & 24.53253 & 20.16865 &          &         &         \\ \hline
+            1.8 & 44.70118 &          &          &         &         \\ \hline
+        \end{longtable}
+        Hampiran nilai fungsi akan dihitung dengan
+        \begin{align*}
+            f(t) = & f(t_0) + (x - x_0)\left(\frac{\Delta f_0}{1!h}\right) + (x - x_0)(x - x_1)\left(\frac{\Delta^2f_0}{2!h^2}\right) + \\ & ... + (x - x_0)...(x - x_{n-1})\left(\frac{\Delta^nf_0}{n!h^n}\right)
+        \end{align*}
+        Perhitungan dilakukan dengan "Microsoft Excel"
+        \begin{longtable}[c]{|l|lllll|}
+            \hline
+            t=x      & \multicolumn{1}{l|}{1}       & \multicolumn{1}{l|}{1.2}      & \multicolumn{1}{l|}{1.4}      & \multicolumn{1}{l|}{1.6}      & 1.8      \\ \hline
+            y = f(t) & \multicolumn{1}{l|}{7.38906} & \multicolumn{1}{l|}{11.02318} & \multicolumn{1}{l|}{16.44465} & \multicolumn{1}{l|}{24.53253} & 44.70118 \\ \hline
+            t=    & \multicolumn{5}{l|}{1.1}           \\ \hline
+            h=    & \multicolumn{5}{l|}{0.2}           \\ \hline
+            f(x)= & \multicolumn{5}{l|}{8.70423234375} \\ \hline
+        \end{longtable}
+    }
+    \item {
+        Interpolasi Beda Mundur Newton-Gregory
+
+        Tabel beda
+        \begin{longtable}[c]{|l|l|l|l|l|l|}
+            \hline
+            $x$ & $f(x)$ & {$\Delta f$} & {$\Delta f^2$} & {$\Delta f^3$} & {$\Delta f^4$} \\ \hline
+            1   & 7.38906  & 3.63412  & 1.78735  & 0.87906 & 8.53529 \\ \hline
+            1.2 & 11.02318 & 5.42147  & 2.66641  & 9.41436 &         \\ \hline
+            1.4 & 16.44465 & 8.08788  & 12.08077 &         &         \\ \hline
+            1.6 & 24.53253 & 20.16865 &          &         &         \\ \hline
+            1.8 & 44.70118 &          &          &         &         \\ \hline
+        \end{longtable}
+        Hampiran nilai fungsi akan dihitung dengan
+        \begin{align*}
+            f(t) = & f(t_n) + (t - t_n)\frac{1}{1!h}\nabla f(t_n) + f(t - t_n)(t - t_{n-1})\frac{1}{2!h^2} \nabla^2 f(t_n) + \\ & ... (t - t_n)...(t - t_1)\frac{1}{n!h^n}\nabla^nf(t_n)
+        \end{align*}
+        Perhitungan dilakukan dengan "Microsoft Excel"
+        \begin{longtable}[c]{|l|lllll|}
+            \hline
+            t=x      & \multicolumn{1}{l|}{1}       & \multicolumn{1}{l|}{1.2}      & \multicolumn{1}{l|}{1.4}      & \multicolumn{1}{l|}{1.6}      & 1.8      \\ \hline
+            \endfirsthead
+            %
+            \endhead
+            %
+            y = f(t) & \multicolumn{1}{l|}{7.38906} & \multicolumn{1}{l|}{11.02318} & \multicolumn{1}{l|}{16.44465} & \multicolumn{1}{l|}{24.53253} & 44.70118 \\ \hline
+            t=    & \multicolumn{5}{l|}{1.1}              \\ \hline
+            h=    & \multicolumn{5}{l|}{0.2}              \\ \hline
+            f(x)= & \multicolumn{5}{l|}{8.70423234374999} \\ \hline
+        \end{longtable}
+    }
+\end{enumerate}
+\qquad Dari keempat metode tersebut, metode pertama yaitu interpolasi linier lebih mudah dihitung. Namun, metode ini hanya menggunakan tepat 2 titik sehingga tingkat akurasinya rendah. Lalu untuk metode interpolasi kuadrat, tingkat akurasinya lebih tinggi dibanding metode interpolasi linier karena menggunakan tepat 3 titik yang juga menjadi kelemahannya karena jika terdapat lebih dari 3 titik, maka titik-titik tersebut tidak terjamin cocok dengan solusi akhirnya. Metode terakhir adalah metode interpolasi beda maju dan mundur Newton-Gregory. Walau metode ini paling sulit dilakukan, tingkat akurasinya lebih tinggi dibanding 2 metode sebelumnya dan jumlah titik yang diinterpolasi tidak dibatasi.
+\end{document}
